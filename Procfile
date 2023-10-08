@@ -1,1 +1,3 @@
-web: streamlit run test.py 
+web: sh set.sh && streamlit run test.py
+
+
