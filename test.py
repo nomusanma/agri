@@ -158,14 +158,6 @@ def main_with_new_start():
         print(f"Task {task.id} - Start: {task.start_date}, End: {task.end_date}")
 
 
-
-# def create_gantt_chart(tasks):
-#     """ガントチャートの作成"""
-#     df = pd.DataFrame([(task.id, task.start_date, task.end_date) for task in tasks], columns=['Task', 'Start', 'Finish'])
-#     fig = px.timeline(df, x_start="Start", x_end="Finish", y="Task", title="Task Schedule")
-#     fig.update_yaxes(categoryorder="total ascending")
-#     return fig
-
 def generate_excel(tasks):
     """タスクのリストをエクセルファイルに出力する関数"""
     df = pd.DataFrame([(task.id, task.start_date, task.end_date) for task in tasks], columns=['Task', 'Start', 'Finish'])
@@ -194,13 +186,13 @@ def create_gantt_chart(tasks):
         10: "10: 育苗管理",
         11: "11: 田植え"
     }
-    df['Task2'] = df['Task'].map(task_name_mapping)
+    df['農作業'] = df['Task'].map(task_name_mapping)
 
     # タスクIDで昇順にソート
     df = df.sort_values(by='Task', ascending=False)
     print(df)
 
-    fig = px.timeline(df, x_start="Start", x_end="Finish", y="Task2", title="タスクスケジュール")
+    fig = px.timeline(df, x_start="Start", x_end="Finish", y="農作業", title="タスクスケジュール")
     #fig.update_yaxes(categoryorder="total ascending")
 
     # x軸のメモリを細かく設定
@@ -236,16 +228,16 @@ def main():
 
     default_task_hours = {  # この辞書に各タスクのデフォルトの作業時間を設定
         "1": 1.0,
-        "2": 3.0,
-        "3": 2.0,
-        "4": 1.0,
-        "5": 1.0,
-        "6": 1.0,
-        "7": 2.0,
-        "8": 1.0,
-        "9": 1.0,
-        "10": 2.0,
-        "11": 3.0
+        "2": 30.0,
+        "3": 10.0,
+        "4": 10.0,
+        "5": 10.0,
+        "6": 30.0,
+        "7": 10.0,
+        "8": 10.0,
+        "9": 10.0,
+        "10": 30.0,
+        "11": 30.0
     }
 
     task_hours_input = {}
