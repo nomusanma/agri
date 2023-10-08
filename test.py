@@ -32,12 +32,6 @@ class Task:
         return int(hours / 8) + (1 if hours % 8 > 0 else 0)
 
 
-
-
-
-
-
-
 def schedule_tasks(tasks, start_date):
     task_dict = {task.id: task for task in tasks}
     scheduled_task_ids = set()
@@ -241,17 +235,17 @@ def main():
     }
 
     default_task_hours = {  # この辞書に各タスクのデフォルトの作業時間を設定
-        "1": 0.0,
-        "2": 40.0,
-        "3": 24.0,
-        "4": 24.0,
-        "5": 12.0,
-        "6": 80.0,
-        "7": 64.0,
-        "8": 48.0,
-        "9": 480.0,
-        "10": 40.0,
-        "11": 24.0
+        "1": 1.0,
+        "2": 3.0,
+        "3": 2.0,
+        "4": 1.0,
+        "5": 1.0,
+        "6": 1.0,
+        "7": 2.0,
+        "8": 1.0,
+        "9": 1.0,
+        "10": 2.0,
+        "11": 3.0
     }
 
     task_hours_input = {}
