@@ -208,49 +208,52 @@ def create_gantt_chart(tasks):
 
 
 def main():
-    st.title("稲作スケジュール作成")
-
-    field_area = st.number_input("圃場の面積を入力してください（デフォルト: 1ha）:", value=1.0, step=0.1)
-
+    st.markdown("# 🌾 稲作スケジュール作成")
     task_name_mapping = {
-        "1": "1: 田植え準備",
-        "2": "2: 耕起（田起こし",
-        "3": "3: 畦塗り",
-        "4": "4: 基肥",
-        "5": "5: 入水",
-        "6": "6: 代掻き",
-        "7": "7: 種籾準備",
-        "8": "8: 苗代の準備",
-        "9": "9: 播種",
-        "10": "10: 育苗管理",
-        "11": "11: 田植え"
-    }
+            "1": "1: 田植え準備",
+            "2": "2: 耕起（田起こし",
+            "3": "3: 畦塗り",
+            "4": "4: 基肥",
+            "5": "5: 入水",
+            "6": "6: 代掻き",
+            "7": "7: 種籾準備",
+            "8": "8: 苗代の準備",
+            "9": "9: 播種",
+            "10": "10: 育苗管理",
+            "11": "11: 田植え"
+        }
 
     default_task_hours = {  # この辞書に各タスクのデフォルトの作業時間を設定
-        "1": 1.0,
-        "2": 30.0,
-        "3": 10.0,
-        "4": 10.0,
-        "5": 10.0,
-        "6": 30.0,
-        "7": 10.0,
-        "8": 10.0,
-        "9": 10.0,
-        "10": 30.0,
-        "11": 30.0
-    }
+            "1": 1.0,
+            "2": 30.0,
+            "3": 10.0,
+            "4": 10.0,
+            "5": 10.0,
+            "6": 30.0,
+            "7": 10.0,
+            "8": 10.0,
+            "9": 10.0,
+            "10": 30.0,
+            "11": 30.0
+        }
 
-    task_hours_input = {}
-    buffer_input = {}
-    max_workers_input = {}
-    for task_id, task_name in task_name_mapping.items():
-        task_hours_input[task_id] = st.number_input(
-            f"{task_name} の作業時間を入力してください (時間/ha)：",
-            value=default_task_hours[task_id],
-            step=0.5  # ここで0.5単位での入力を設定
-        )
-        buffer_input[task_id] = st.number_input(f"{task_name} のバッファ日数を入力してください:", value=0, min_value=0, format="%d")
-        max_workers_input[task_id] = st.number_input(f"{task_name} の同時稼働できるトラクタ/作業員の数を入力してください:", value=1, min_value=1, format="%d")
+    # サイドバーに入力部分を移動
+    with st.sidebar:
+        st.title("設定")
+        field_area = st.number_input("圃場の面積を入力してください（デフォルト: 1ha）:", value=1.0, step=0.1)
+        task_hours_input = {}
+        buffer_input = {}
+        max_workers_input = {}
+        for task_id, task_name in task_name_mapping.items():
+            task_hours_input[task_id] = st.number_input(
+                f"{task_name} の作業時間を入力してください (時間/ha)：",
+                value=default_task_hours[task_id],
+                step=0.5  # ここで0.5単位での入力を設定
+            )
+            buffer_input[task_id] = st.number_input(f"{task_name} のバッファ日数を入力してください:", value=0, min_value=0, format="%d")
+            max_workers_input[task_id] = st.number_input(f"{task_name} の同時稼働できるトラクタ/作業員の数を入力してください:", value=1, min_value=1, format="%d")
+
+ 
 
 
     tasks = [
@@ -261,11 +264,17 @@ def main():
     start_date = datetime.date(2023, 4, 1)
     due_date = st.date_input('希望納期を選択してください:', datetime.date(2024, 7, 1))
 
+    # スケジュールの計算ボタンがクリックされたときの処理
     if st.button('スケジュールの計算'):
-        tasks = schedule_tasks(tasks, start_date)
-        total_workdays = calculate_total_workdays(tasks[0].start_date, tasks[-1].end_date)
-        new_start_date = get_new_start_date(due_date, total_workdays)
-        scheduled_tasks_new_start = schedule_tasks(tasks, new_start_date)
+        with st.spinner("計算中..."):  # アニメーションを追加
+            tasks = schedule_tasks(tasks, start_date)
+            total_workdays = calculate_total_workdays(tasks[0].start_date, tasks[-1].end_date)
+            new_start_date = get_new_start_date(due_date, total_workdays)
+            scheduled_tasks_new_start = schedule_tasks(tasks, new_start_date)
+        
+        st.success("計算完了!")  # 成功メッセージの表示
+        st.subheader("📅 タスクスケジュール")
+        st.write("以下は計算されたスケジュールのガントチャートです。")
         st.plotly_chart(create_gantt_chart(scheduled_tasks_new_start))
 
         # Excelファイルをダウンロードするボタンの追加
