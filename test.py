@@ -125,11 +125,11 @@ def main_with_new_start():
         Task("4", 24, dependencies=["3"]),
         Task("5", 12, dependencies=["4"]),
         Task("6", 80, dependencies=["5"]),
-        # Task("7", 64, dependencies=["2"]),
-        # Task("8", 48, dependencies=["7"]),
-        # Task("9", 480, dependencies=["8"]),
-        # Task("10", 40, dependencies=["6", "9"]),
-        # Task("11", 24, dependencies=["10"])
+        Task("7", 64, dependencies=["2"]),
+        Task("8", 48, dependencies=["7"]),
+        Task("9", 480, dependencies=["8"]),
+        Task("10", 40, dependencies=["6", "9"]),
+        Task("11", 24, dependencies=["10"])
     ]
 
     start_date = datetime.date(2023, 4, 1)
