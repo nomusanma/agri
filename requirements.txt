@@ -50,3 +50,4 @@ watchdog==3.0.0
 zipp==3.17.0
 networkx==2.6.3
 matplotlib==3.5.0
+japanize-matplotlib

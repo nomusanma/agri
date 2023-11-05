@@ -7,7 +7,7 @@ import plotly.express as px
 import io
 import networkx as nx
 import matplotlib.pyplot as plt
-
+import japanize_matplotlib
 task_name_mapping = {
         "1": "1: 田植え準備",
         "2": "2: 耕起（田起こし",
