@@ -219,8 +219,23 @@ def create_gantt_chart(tasks):
     fig.update_layout(height=600, width=800)
 
     return fig
+import networkx as nx
+import matplotlib.pyplot as plt
 
-
+def draw_dependency_graph(task_order, previous_tasks_input):
+    G = nx.DiGraph()
+    
+    for task_id in task_order:
+        G.add_node(task_id, label=task_name_mapping[task_id])
+        for prev_task_id in previous_tasks_input[task_id]:
+            G.add_edge(prev_task_id, task_id)
+    
+    pos = nx.spring_layout(G)
+    plt.figure(figsize=(10, 6))
+    nx.draw(G, pos, with_labels=True, labels=nx.get_node_attributes(G, 'label'), node_size=3000, node_color="skyblue")
+    plt.title("タスクの依存関係")
+    
+    return plt
 
 def main():
     st.markdown("# 🌾 稲作スケジュール作成")
@@ -315,7 +330,9 @@ def main():
             )
             # 選択された前のタスクの作業名を作業IDに変換
             previous_tasks_input[task_id] = [task_name_to_id[name] for name in selected_prev_task_names]
-
+        st.title("タスクの依存関係図")
+        fig = draw_dependency_graph(task_order, previous_tasks_input)
+        st.pyplot(fig)
 
     # タスクリストの生成
     tasks = [

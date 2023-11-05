@@ -219,8 +219,23 @@ def create_gantt_chart(tasks):
     fig.update_layout(height=600, width=800)
 
     return fig
+import networkx as nx
+import matplotlib.pyplot as plt
 
-
+def draw_dependency_graph(task_order, previous_tasks_input):
+    G = nx.DiGraph()
+    
+    for task_id in task_order:
+        G.add_node(task_id, label=task_name_mapping[task_id])
+        for prev_task_id in previous_tasks_input[task_id]:
+            G.add_edge(prev_task_id, task_id)
+    
+    pos = nx.spring_layout(G)
+    plt.figure(figsize=(10, 6))
+    nx.draw(G, pos, with_labels=True, labels=nx.get_node_attributes(G, 'label'), node_size=3000, node_color="skyblue")
+    plt.title("タスクの依存関係")
+    
+    return plt
 
 def main():
     st.markdown("# 🌾 稲作スケジュール作成")
@@ -285,39 +300,32 @@ def main():
     task_name_to_id = {name: id for id, name in task_name_mapping.items()}
 
     # サイドバーにタスク順序の選択を追加
-    # サイドバーにタスク順序の選択を追加
-    # with st.sidebar:
-    #     st.title("タスク順序")
-    #     task_order_names = st.multiselect(
-    #         "タスクの順序をドラッグ&ドロップで並べ替えてください:",
-    #         list(task_name_mapping.values()),  # 作業名を使用
-    #         default=list(task_name_mapping.values())  # デフォルト値も作業名を使用
-    #     )
-    #     # 選択された作業名を作業IDに変換
-    #     task_order = [task_name_to_id[name] for name in task_order_names]
-
-
-    # # サイドバーにタスクの前のタスクの入力部分を追加
-    # with st.sidebar:
-    #     st.title("前のタスク")
-    #     previous_tasks_input = {}
-    #     for task_id, task_name in task_name_mapping.items():
-    #         # 選択された前のタスクの作業名を取得
-    #         selected_prev_task_names = st.multiselect(
-    #             f"{task_name} の前に完了する必要があるタスクを選択してください:",
-    #             list(task_name_mapping.values()),
-    #             default=[task_name_mapping[prev_task_id] for prev_task_id in default_previous_tasks[task_id]]
-    #         )
-    #         # 選択された前のタスクの作業名を作業IDに変換
-    #         previous_tasks_input[task_id] = [task_name_to_id[name] for name in selected_prev_task_names]
     with st.sidebar:
-        st.title("タスクの順序と依存関係")
+        st.title("タスク順序")
+        task_order_names = st.multiselect(
+            "タスクの順序をドラッグ&ドロップで並べ替えてください:",
+            list(task_name_mapping.values()),  # 作業名を使用
+            default=list(task_name_mapping.values())  # デフォルト値も作業名を使用
+        )
+        # 選択された作業名を作業IDに変換
+        task_order = [task_name_to_id[name] for name in task_order_names]
+    with st.sidebar:
+        st.title("タスクリセット")
+        if st.button("デフォルトにリセット"):
+            task_order = list(task_name_mapping.keys())  # タスクの順序をデフォルトにリセット
+            previous_tasks_input = default_previous_tasks  # 前のタスクの設定をデフォルトにリセット
+            st.success("タスクの順序と前のタスクの設定がデフォルトにリセットされました。")
+    
+
+    # サイドバーにタスクの前のタスクの入力部分を追加
+    with st.sidebar:
+        st.title("前のタスク")
         previous_tasks_input = {}
         for task_id, task_name in task_name_mapping.items():
             # 選択された前のタスクの作業名を取得
             selected_prev_task_names = st.multiselect(
                 f"{task_name} の前に完了する必要があるタスクを選択してください:",
-                [name for id, name in task_name_mapping.items() if id != task_id],  # 現在のタスクを除外
+                list(task_name_mapping.values()),
                 default=[task_name_mapping[prev_task_id] for prev_task_id in default_previous_tasks[task_id]]
             )
             # 選択された前のタスクの作業名を作業IDに変換
