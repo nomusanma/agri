@@ -238,6 +238,21 @@ def main():
             "10": 30.0,
             "11": 30.0
         }
+    # デフォルトの前のタスクのマッピングを設定
+    default_previous_tasks = {
+        "1": [],
+        "2": ["1"],
+        "3": ["2"],
+        "4": ["3"],
+        "5": ["4"],
+        "6": ["5"],
+        "7": ["1"],
+        "8": ["7"],
+        "9": ["8"],
+        "10": ["9"],
+        "11": ["6", "10"]
+    }
+
 
     # サイドバーに入力部分を移動
     with st.sidebar:
@@ -264,25 +279,36 @@ def main():
     ]
 
 
+    # 作業IDから作業名へのマッピングを作成
+    task_id_to_name = {id: name for id, name in task_name_mapping.items()}
+    # 作業名から作業IDへのマッピングを作成
+    task_name_to_id = {name: id for id, name in task_name_mapping.items()}
+
     # サイドバーにタスク順序の選択を追加
     with st.sidebar:
         st.title("タスク順序")
-        task_order = st.multiselect(
+        task_order_names = st.multiselect(
             "タスクの順序をドラッグ&ドロップで並べ替えてください:",
-            list(task_name_mapping.keys()),
-            default=list(task_name_mapping.keys())
+            list(task_name_mapping.values()),  # 作業名を使用
+            default=list(task_name_mapping.values())  # デフォルト値も作業名を使用
         )
+        # 選択された作業名を作業IDに変換
+        task_order = [task_name_to_id[name] for name in task_order_names]
 
-    # サイドバーにタスク依存関係の入力部分を追加
+    # サイドバーにタスクの前のタスクの入力部分を追加
     with st.sidebar:
-        st.title("タスク依存関係")
-        dependencies_input = {}
+        st.title("前のタスク")
+        previous_tasks_input = {}
         for task_id, task_name in task_name_mapping.items():
-            dependencies_input[task_id] = st.multiselect(
-                f"{task_name} の依存するタスクを選択してください:",
-                list(task_name_mapping.keys()),
-                default=[]
+            # 選択された前のタスクの作業名を取得
+            selected_prev_task_names = st.multiselect(
+                f"{task_name} の前に完了する必要があるタスクを選択してください:",
+                list(task_name_mapping.values()),
+                default=[task_name_mapping[prev_task_id] for prev_task_id in default_previous_tasks[task_id]]
             )
+            # 選択された前のタスクの作業名を作業IDに変換
+            previous_tasks_input[task_id] = [task_name_to_id[name] for name in selected_prev_task_names]
+
 
     # タスクリストの生成
     tasks = [
