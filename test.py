@@ -274,11 +274,12 @@ def main():
 
     # 選択された順序に基づいてタスクリストを生成
 # 選択された順序に基づいてタスクリストを生成
+
     tasks = [
-        Task(task_id, task_hours_input[task_id], field_area, max_workers_input[task_id], buffer_input[task_id], dependencies=dependencies)
-        for index, task_id in enumerate(task_order)
-        for dependencies in [(task_order[:index] if index > 0 else [])]  # 依存関係を更新
-    ]
+    Task(task_id, task_hours_input[task_id], field_area, max_workers_input[task_id], buffer_input[task_id], dependencies=dependencies)
+    for index, task_id in enumerate(task_order)
+    for dependencies in [(task_order[:index] if index > 0 else [])]  # 依存関係を更新
+]
     start_date = datetime.date(2023, 4, 1)
     due_date = st.date_input('希望納期を選択してください:', datetime.date(2024, 7, 1))
 
