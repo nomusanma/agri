@@ -264,7 +264,16 @@ def main():
     ]
 
 
-        # サイドバーにタスク依存関係の入力部分を追加
+    # サイドバーにタスク順序の選択を追加
+    with st.sidebar:
+        st.title("タスク順序")
+        task_order = st.multiselect(
+            "タスクの順序をドラッグ&ドロップで並べ替えてください:",
+            list(task_name_mapping.keys()),
+            default=list(task_name_mapping.keys())
+        )
+
+    # サイドバーにタスク依存関係の入力部分を追加
     with st.sidebar:
         st.title("タスク依存関係")
         dependencies_input = {}
@@ -280,24 +289,6 @@ def main():
         Task(task_id, task_hours_input[task_id], field_area, max_workers_input[task_id], buffer_input[task_id], dependencies=dependencies_input[task_id])
         for task_id in task_order
     ]
-
-        # サイドバーにタスク順序の選択を追加
-    with st.sidebar:
-        st.title("タスク順序")
-        task_order = st.multiselect(
-            "タスクの順序をドラッグ&ドロップで並べ替えてください:",
-            list(task_name_mapping.keys()),
-            default=list(task_name_mapping.keys())
-        )
-
-    # 選択された順序に基づいてタスクリストを生成
-# 選択された順序に基づいてタスクリストを生成
-
-    tasks = [
-    Task(task_id, task_hours_input[task_id], field_area, max_workers_input[task_id], buffer_input[task_id], dependencies=dependencies)
-    for index, task_id in enumerate(task_order)
-    for dependencies in [(task_order[:index] if index > 0 else [])]  # 依存関係を更新
-]
     start_date = datetime.date(2023, 4, 1)
     due_date = st.date_input('希望納期を選択してください:', datetime.date(2024, 7, 1))
 
