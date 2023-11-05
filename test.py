@@ -279,23 +279,36 @@ def main():
             "10": ["9"], 
             "11": ["6", "10"]
         }
+    if task_order_input:
+        task_order = [str(i) for i in task_order_input.split(',')]
+    else:
+        task_order = list(task_dependencies.keys())  # デフォルトのタスク順序
 
+    # tasks = [
+    #     Task(task_id, task_hours_input[task_id], field_area, max_workers_input[task_id], buffer_input[task_id], dependencies=task_dependencies.get(task_id, []))
+    #     for task_id in (task_order_input.split(',') if task_order_input else task_dependencies.keys())
+    # ]
     tasks = [
-        Task(task_id, task_hours_input[task_id], field_area, max_workers_input[task_id], buffer_input[task_id], dependencies=task_dependencies.get(task_id, []))
-        for task_id in (task_order_input.split(',') if task_order_input else task_dependencies.keys())
-    ]
+    Task(task_id, task_hours_input[task_id], field_area, max_workers_input[task_id], buffer_input[task_id], dependencies=task_dependencies.get(task_id, []))
+    for task_id in task_order
+]
 
     start_date = datetime.date(2023, 4, 1)
     due_date = st.date_input('希望納期を選択してください:', datetime.date(2024, 7, 1))
+    # 既存のコードの下に追加
 
     # スケジュールの計算ボタンがクリックされたときの処理
+# 既存のコードを変更
     if st.button('スケジュールの計算'):
         with st.spinner("計算中..."): 
             tasks = schedule_tasks(tasks, start_date)
             total_workdays = calculate_total_workdays(tasks[0].start_date, tasks[-1].end_date)
             new_start_date = get_new_start_date(due_date, total_workdays)
+            # 新しいタスク順序でタスクリストを再作成
+            tasks = [Task(task_id, task_hours_input[task_id], field_area, max_workers_input[task_id], buffer_input[task_id], dependencies=task_dependencies.get(task_id, []))
+                    for task_id in task_order]
             scheduled_tasks_new_start = schedule_tasks(tasks, new_start_date)
-        
+
         st.success("計算完了!")  
         st.subheader("📅 タスクスケジュール")
         st.write("以下は計算されたスケジュールのガントチャートです。")
