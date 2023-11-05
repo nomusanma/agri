@@ -5,7 +5,7 @@ import pandas as pd
 import datetime
 import plotly.express as px
 import io
-
+import st_custom_widgets as stcw
 
 task_name_mapping = {
         "1": "1: 田植え準備",
@@ -286,15 +286,25 @@ def main():
 
     # サイドバーにタスク順序の選択を追加
     # サイドバーにタスク順序の選択を追加
+    # with st.sidebar:
+    #     st.title("タスク順序")
+    #     task_order_names = st.multiselect(
+    #         "タスクの順序をドラッグ&ドロップで並べ替えてください:",
+    #         list(task_name_mapping.values()),  # 作業名を使用
+    #         default=list(task_name_mapping.values())  # デフォルト値も作業名を使用
+    #     )
+    #     # 選択された作業名を作業IDに変換
+    #     task_order = [task_name_to_id[name] for name in task_order_names]
     with st.sidebar:
         st.title("タスク順序")
-        task_order_names = st.multiselect(
+        task_order_names = stcw.order_list(
             "タスクの順序をドラッグ&ドロップで並べ替えてください:",
-            list(task_name_mapping.values()),  # 作業名を使用
-            default=list(task_name_mapping.values())  # デフォルト値も作業名を使用
+            list(task_name_mapping.values()),
+            list(task_name_mapping.values())  # デフォルト値も作業名を使用
         )
         # 選択された作業名を作業IDに変換
         task_order = [task_name_to_id[name] for name in task_order_names]
+
 
     # サイドバーにタスクの前のタスクの入力部分を追加
     with st.sidebar:
