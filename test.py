@@ -31,7 +31,6 @@ class Task:
     def convert_hours_to_days(self, hours):
         return int(hours / 8) + (1 if hours % 8 > 0 else 0)
 
-
 def schedule_tasks(tasks, start_date):
     task_dict = {task.id: task for task in tasks}
     scheduled_task_ids = set()
@@ -54,16 +53,13 @@ def schedule_tasks(tasks, start_date):
                 task_days_spent += 1
             current_date += datetime.timedelta(days=1)
 
-#         task.start_date = task_start
-# #        task.end_date = current_date - datetime.timedelta(days=1)
-#         task.end_date = current_date - datetime.timedelta(days=1)
-#         task.end_date += datetime.timedelta(days=task.buffer_days)  # バッファを追加
         task.start_date = task_start
         task.end_date = current_date - datetime.timedelta(days=1)
         task.end_date += datetime.timedelta(days=task.buffer_days)  # バッファを追加
-        # Debugging statements:
-        print(f'Task {task.id} - Start: {task.start_date}, End: {task.end_date}')
 
+        # Debugging statements:
+        if task.start_date is None or task.end_date is None:
+            raise ValueError(f"Failed to schedule task {task.id}")  # Update: エラー処理の追加
 
         scheduled_task_ids.add(task.id)
 
