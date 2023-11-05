@@ -303,8 +303,8 @@ def main():
     with st.sidebar:
         st.title("タスク順序")
 
-        fixed_task_order_names = [task_name_mapping[str(i)] for i in range(1, 6)]  # タスクID "1" から "5" まで
-        other_task_names = [name for id, name in task_name_mapping.items() if id not in map(str, range(1, 6))]  # タスクID "6" 以上
+        fixed_task_order_name = task_name_mapping["1"]  # タスクID "1" のみ
+        other_task_names = [name for id, name in task_name_mapping.items() if id != "1"]
 
         if st.button("タスクのリセット"):
             task_hours_input = default_task_hours.copy()
@@ -313,18 +313,23 @@ def main():
             
         # 田植え準備のタスク以外の順序を変更
         ordered_other_task_names = st.multiselect(
-            "田植え準備以外のタスクの順序をドラッグ&ドロップで並べ替えてください:",
+            "田植え準備タスク以外のタスクの順序をドラッグ&ドロップで並べ替えてください:",
             other_task_names, 
             default=other_task_names
         )
         
         # 田植え準備のタスクとその他のタスクを結合
-        task_order_names = fixed_task_order_names + ordered_other_task_names
+        task_order_names = [fixed_task_order_name] + ordered_other_task_names
         task_order = [task_name_to_id[name] for name in task_order_names]
 
     # サイドバーにタスクの前のタスクの入力部分を追加
     with st.sidebar:
         st.title("前のタスク")
+
+        for task_id, task_name in task_name_mapping.items():
+            if task_id == "1":  # タスクID "1" の場合
+                st.write(f"{task_name}: 設定不可")  # 変更できない旨を表示
+                continue  # 以降の処理をスキップ
         previous_tasks_input = {}
         previous_tasks_input2 = {}
         for task_id, task_name in task_name_mapping.items():
