@@ -140,7 +140,7 @@ def main_with_new_start():
     new_start_date = get_new_start_date(desired_end_date, total_workdays)
 
     # Recalculate using the new start date
-    tasks_new_start =[
+    tasks_new_start = [
         Task("1", 16),
         Task("2", 40, dependencies=["1"]),
         Task("3", 24, dependencies=["2"]),
@@ -150,8 +150,8 @@ def main_with_new_start():
         Task("7", 64, dependencies=["2"]),
         Task("8", 48, dependencies=["7"]),
         Task("9", 480, dependencies=["8"]),
-        Task("10", 40, dependencies=["9"]),
-        Task("11", 24, dependencies=["6","10"])
+        Task("10", 40, dependencies=["6", "9"]),
+        Task("11", 24, dependencies=["10"])
     ]
     scheduled_tasks_new_start = schedule_tasks(tasks_new_start, new_start_date)
     for task in scheduled_tasks_new_start:
