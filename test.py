@@ -232,7 +232,7 @@ def draw_dependency_graph(task_order, previous_tasks_input):
     
     pos = nx.spring_layout(G)
     plt.figure(figsize=(10, 6))
-    nx.draw(G, pos, with_labels=True, labels=nx.get_node_attributes(G, 'label'), node_size=3000, node_color="skyblue")
+    nx.draw(G, pos, with_labels=True, labels=nx.get_node_attributes(G, 'label'), node_size=3000, node_color="skyblue",font_family='Hiragino Kaku Gothic Pro')
     plt.title("タスクの依存関係")
     
     return plt
