@@ -54,10 +54,15 @@ def schedule_tasks(tasks, start_date):
                 task_days_spent += 1
             current_date += datetime.timedelta(days=1)
 
+#         task.start_date = task_start
+# #        task.end_date = current_date - datetime.timedelta(days=1)
+#         task.end_date = current_date - datetime.timedelta(days=1)
+#         task.end_date += datetime.timedelta(days=task.buffer_days)  # バッファを追加
         task.start_date = task_start
-#        task.end_date = current_date - datetime.timedelta(days=1)
         task.end_date = current_date - datetime.timedelta(days=1)
         task.end_date += datetime.timedelta(days=task.buffer_days)  # バッファを追加
+        # Debugging statements:
+        print(f'Task {task.id} - Start: {task.start_date}, End: {task.end_date}')
 
 
         scheduled_task_ids.add(task.id)
@@ -95,8 +100,6 @@ def reverse_schedule_tasks(tasks, end_date):
 
 
 def calculate_total_workdays(start_date, end_date):
-    if start_date is None or end_date is None:
-        raise ValueError("Both start_date and end_date should be provided")
     total_days = (end_date - start_date).days
     workdays = 0
     current_date = start_date
@@ -107,7 +110,6 @@ def calculate_total_workdays(start_date, end_date):
         current_date += datetime.timedelta(days=1)
 
     return workdays
-
 
 def get_new_start_date(end_date, total_workdays):
     current_date = end_date
