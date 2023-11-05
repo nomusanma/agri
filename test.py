@@ -301,27 +301,32 @@ def main():
 
     # サイドバーにタスク順序の選択を追加
     with st.sidebar:
-        # 既存のコード
         st.title("タスク順序")
-        task_order_names = list(task_name_mapping.values())  # ここで初期化
+
+        fixed_task_order_names = [task_name_mapping[str(i)] for i in range(1, 6)]  # タスクID "1" から "5" まで
+        other_task_names = [name for id, name in task_name_mapping.items() if id not in map(str, range(1, 6))]  # タスクID "6" 以上
+
         if st.button("タスクのリセット"):
             task_hours_input = default_task_hours.copy()
-            task_order_names = list(task_name_mapping.values())
             previous_tasks_input = default_previous_tasks.copy()
-            st.success("タスクの順序と前のタスクの設定がデフォルトにリセットされました。")
-        
-        task_order_names = st.multiselect(
-            "タスクの順序をドラッグ&ドロップで並べ替えてください:",
-            list(task_name_mapping.values()),  # 作業名を使用
-            default=task_order_names  # リセット後の値または初期値を使用
+            st.success("タスクの設定がデフォルトにリセットされました。")
+            
+        # 田植え準備のタスク以外の順序を変更
+        ordered_other_task_names = st.multiselect(
+            "田植え準備以外のタスクの順序をドラッグ&ドロップで並べ替えてください:",
+            other_task_names, 
+            default=other_task_names
         )
-        # 選択された作業名を作業IDに変換
+        
+        # 田植え準備のタスクとその他のタスクを結合
+        task_order_names = fixed_task_order_names + ordered_other_task_names
         task_order = [task_name_to_id[name] for name in task_order_names]
 
     # サイドバーにタスクの前のタスクの入力部分を追加
     with st.sidebar:
         st.title("前のタスク")
         previous_tasks_input = {}
+        previous_tasks_input2 = {}
         for task_id, task_name in task_name_mapping.items():
             # 選択された前のタスクの作業名を取得
             selected_prev_task_names = st.multiselect(
@@ -329,8 +334,15 @@ def main():
                 list(task_name_mapping.values()),
                 default=[task_name_mapping[prev_task_id] for prev_task_id in default_previous_tasks[task_id]]
             )
+            selected_prev_task_ids = st.multiselect(
+            f"タスク {task_id} の前に完了する必要があるタスクを選択してください:",
+            list(default_task_hours.keys()),
+            default=default_previous_tasks[task_id])
+
             # 選択された前のタスクの作業名を作業IDに変換
             previous_tasks_input[task_id] = [task_name_to_id[name] for name in selected_prev_task_names]
+            previous_tasks_input2[task_id] = selected_prev_task_ids
+  
         st.title("タスクの依存関係図")
         fig = draw_dependency_graph(task_order, previous_tasks_input)
         st.pyplot(fig)
