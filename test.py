@@ -250,8 +250,12 @@ def main():
         "8": ["7"],
         "9": ["8"],
         "10": ["9"],
-        "11": ["6", "10"]
-    }
+        "11": ["6", "10"]}
+    
+    # 作業IDから作業名へのマッピングを作成
+    task_id_to_name = {id: name for id, name in task_name_mapping.items()}
+    # 作業名から作業IDへのマッピングを作成
+    task_name_to_id = {name: id for id, name in task_name_mapping.items()}
 
     section = st.radio("設定:", ["圃場設定", "タスク設定"])
     # サイドバーに入力部分を移動
@@ -280,10 +284,7 @@ def main():
         ]
 
 
-        # 作業IDから作業名へのマッピングを作成
-        task_id_to_name = {id: name for id, name in task_name_mapping.items()}
-        # 作業名から作業IDへのマッピングを作成
-        task_name_to_id = {name: id for id, name in task_name_mapping.items()}
+
     elif section == "タスク設定":
         with st.sidebar:
             st.title("タスク順序")
