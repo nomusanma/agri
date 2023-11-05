@@ -253,12 +253,8 @@ def main():
         "11": ["6", "10"]
     }
 
-    tab = st.beta_tabs(
-        [
-            {"label": "圃場設定", "value": "field_settings"},
-            {"label": "タスク設定", "value": "task_settings"}
-        ]
-    )    
+
+    
     # サイドバーに入力部分を移動
     
     with st.sidebar:
