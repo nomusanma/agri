@@ -5,7 +5,8 @@ import pandas as pd
 import datetime
 import plotly.express as px
 import io
-
+import networkx as nx
+import matplotlib.pyplot as plt
 
 task_name_mapping = {
         "1": "1: 田植え準備",
@@ -219,8 +220,7 @@ def create_gantt_chart(tasks):
     fig.update_layout(height=600, width=800)
 
     return fig
-import networkx as nx
-import matplotlib.pyplot as plt
+
 
 def draw_dependency_graph(task_order, previous_tasks_input):
     G = nx.DiGraph()
