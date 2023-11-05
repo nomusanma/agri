@@ -254,9 +254,7 @@ def main():
     }
 
 
-    
     # サイドバーに入力部分を移動
-    
     with st.sidebar:
         st.title("設定")
         field_area = st.number_input("圃場の面積を入力してください（デフォルト: 1ha）:", value=1.0, step=0.1)
@@ -286,7 +284,8 @@ def main():
     # 作業名から作業IDへのマッピングを作成
     task_name_to_id = {name: id for id, name in task_name_mapping.items()}
 
-
+    # サイドバーにタスク順序の選択を追加
+    # サイドバーにタスク順序の選択を追加
     with st.sidebar:
         st.title("タスク順序")
         task_order_names = st.multiselect(
