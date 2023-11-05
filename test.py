@@ -258,7 +258,7 @@ def main():
 
     tasks = [
         Task(task_id, task_hours_input[task_id], field_area, max_workers_input[task_id], buffer_input[task_id], dependencies=dependencies)
-        for task_id, dependencies in [("1", []), ("2", ["1"]), ("3", ["2"]), ("4", ["3"]), ("5", ["4"]), ("6", ["5"]), ("7", ["1"]), ("8", ["7"]), ("9", ["8"]), ("10", ["6", "9"]), ("11", ["10"])]
+        for task_id, dependencies in [("1", []), ("2", ["1"]), ("3", ["2"]), ("4", ["3"]), ("5", ["4"]), ("6", ["5"]), ("7", ["1"]), ("8", ["7"]), ("9", ["8"]), ("10", ["9"]), ("11", ["6","10"])]
     ]
 
     start_date = datetime.date(2023, 4, 1)
