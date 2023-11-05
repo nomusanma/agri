@@ -285,7 +285,6 @@ def main():
     task_name_to_id = {name: id for id, name in task_name_mapping.items()}
 
     # サイドバーにタスク順序の選択を追加
-    # サイドバーにタスク順序の選択を追加
     with st.sidebar:
         st.title("タスク順序")
         task_order_names = st.multiselect(
@@ -295,7 +294,6 @@ def main():
         )
         # 選択された作業名を作業IDに変換
         task_order = [task_name_to_id[name] for name in task_order_names]
-
 
     # サイドバーにタスクの前のタスクの入力部分を追加
     with st.sidebar:
@@ -314,7 +312,7 @@ def main():
 
     # タスクリストの生成
     tasks = [
-        Task(task_id, task_hours_input[task_id], field_area, max_workers_input[task_id], buffer_input[task_id], dependencies=previous_tasks_input[task_id])
+        Task(task_id, task_hours_input[task_id], field_area, max_workers_input[task_id], buffer_input[task_id], dependencies=dependencies_input[task_id])
         for task_id in task_order
     ]
     start_date = datetime.date(2023, 4, 1)
