@@ -312,7 +312,7 @@ def main():
 
     # タスクリストの生成
     tasks = [
-        Task(task_id, task_hours_input[task_id], field_area, max_workers_input[task_id], buffer_input[task_id], dependencies=dependencies_input[task_id])
+        Task(task_id, task_hours_input[task_id], field_area, max_workers_input[task_id], buffer_input[task_id], dependencies=previous_tasks_input[task_id])
         for task_id in task_order
     ]
     start_date = datetime.date(2023, 4, 1)
