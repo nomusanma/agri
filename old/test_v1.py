@@ -314,16 +314,20 @@ def main():
         st.title("タスクの順序と依存関係")
         previous_tasks_input = {}
         for task_id, task_name in task_name_mapping.items():
+            # 選択された前のタスクの作業名を取得
             selected_prev_task_names = st.multiselect(
                 f"{task_name} の前に完了する必要があるタスクを選択してください:",
-                [name for id, name in task_name_mapping.items() if id != task_id],
+                [name for id, name in task_name_mapping.items() if id != task_id],  # 現在のタスクを除外
                 default=[task_name_mapping[prev_task_id] for prev_task_id in default_previous_tasks[task_id]]
             )
+            # 選択された前のタスクの作業名を作業IDに変換
             previous_tasks_input[task_id] = [task_name_to_id[name] for name in selected_prev_task_names]
 
+
+    # タスクリストの生成
     tasks = [
         Task(task_id, task_hours_input[task_id], field_area, max_workers_input[task_id], buffer_input[task_id], dependencies=previous_tasks_input[task_id])
-        for task_id in task_name_mapping.keys()
+        for task_id in task_order
     ]
     start_date = datetime.date(2023, 4, 1)
     due_date = st.date_input('希望納期を選択してください:', datetime.date(2024, 7, 1))
