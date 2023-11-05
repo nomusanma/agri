@@ -294,6 +294,13 @@ def main():
         )
         # 選択された作業名を作業IDに変換
         task_order = [task_name_to_id[name] for name in task_order_names]
+    with st.sidebar:
+        st.title("タスクリセット")
+        if st.button("デフォルトにリセット"):
+            task_order = list(task_name_mapping.keys())  # タスクの順序をデフォルトにリセット
+            previous_tasks_input = default_previous_tasks  # 前のタスクの設定をデフォルトにリセット
+            st.success("タスクの順序と前のタスクの設定がデフォルトにリセットされました。")
+    
 
     # サイドバーにタスクの前のタスクの入力部分を追加
     with st.sidebar:
