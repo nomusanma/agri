@@ -253,14 +253,9 @@ def main():
         "11": ["6", "10"]
     }
 
-    tab = st.beta_tabs(
-        [
-            {"label": "圃場設定", "value": "field_settings"},
-            {"label": "タスク設定", "value": "task_settings"}
-        ]
-    )    
+    section = st.radio("設定:", ["圃場設定", "タスク設定"])
     # サイドバーに入力部分を移動
-    if tab == "field_settings":
+    if section == "圃場設定":
         with st.sidebar:
             st.title("設定")
             field_area = st.number_input("圃場の面積を入力してください（デフォルト: 1ha）:", value=1.0, step=0.1)
@@ -289,7 +284,7 @@ def main():
         task_id_to_name = {id: name for id, name in task_name_mapping.items()}
         # 作業名から作業IDへのマッピングを作成
         task_name_to_id = {name: id for id, name in task_name_mapping.items()}
-    elif tab == "task_settings":
+    elif section == "タスク設定":
         with st.sidebar:
             st.title("タスク順序")
             task_order_names = st.multiselect(
