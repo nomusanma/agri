@@ -128,10 +128,10 @@ def main_with_new_start():
         Task("7", 64, dependencies=["2"]),
         Task("8", 48, dependencies=["7"]),
         Task("9", 480, dependencies=["8"]),
-        Task("10", 40, dependencies=["6", "9"]),
-        Task("11", 24, dependencies=["10"])
+        Task("10", 40, dependencies=["9"]),
+        Task("11", 24, dependencies=["6","10"])
     ]
-
+#kokoko
     start_date = datetime.date(2023, 4, 1)
     scheduled_tasks = schedule_tasks(tasks, start_date)
 
