@@ -331,7 +331,6 @@ def main():
                 st.write(f"{task_name}: 設定不可")  # 変更できない旨を表示
                 continue  # 以降の処理をスキップ
         previous_tasks_input = {}
-        previous_tasks_input2 = {}
         for task_id, task_name in task_name_mapping.items():
             # 選択された前のタスクの作業名を取得
             selected_prev_task_names = st.multiselect(
@@ -339,14 +338,11 @@ def main():
                 list(task_name_mapping.values()),
                 default=[task_name_mapping[prev_task_id] for prev_task_id in default_previous_tasks[task_id]]
             )
-            selected_prev_task_ids = st.multiselect(
-            f"タスク {task_id} の前に完了する必要があるタスクを選択してください:",
-            list(default_task_hours.keys()),
-            default=default_previous_tasks[task_id])
+
 
             # 選択された前のタスクの作業名を作業IDに変換
             previous_tasks_input[task_id] = [task_name_to_id[name] for name in selected_prev_task_names]
-            previous_tasks_input2[task_id] = selected_prev_task_ids
+            
   
         st.title("タスクの依存関係図")
         fig = draw_dependency_graph(task_order, previous_tasks_input)
