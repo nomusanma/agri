@@ -256,6 +256,11 @@ def main():
     task_id_to_name = {id: name for id, name in task_name_mapping.items()}
     # 作業名から作業IDへのマッピングを作成
     task_name_to_id = {name: id for id, name in task_name_mapping.items()}
+    # 入力変数の初期化を main 関数の先頭で行います
+    task_hours_input = {}
+    buffer_input = {}
+    max_workers_input = {}
+    previous_tasks_input = {}
 
     section = st.radio("設定:", ["圃場設定", "タスク設定"])
     # サイドバーに入力部分を移動
