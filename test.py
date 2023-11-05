@@ -263,6 +263,24 @@ def main():
         for task_id, dependencies in [("1", []), ("2", ["1"]), ("3", ["2"]), ("4", ["3"]), ("5", ["4"]), ("6", ["5"]), ("7", ["1"]), ("8", ["7"]), ("9", ["8"]), ("10", ["9"]), ("11", ["6","10"])]
     ]
 
+
+        # サイドバーにタスク依存関係の入力部分を追加
+    with st.sidebar:
+        st.title("タスク依存関係")
+        dependencies_input = {}
+        for task_id, task_name in task_name_mapping.items():
+            dependencies_input[task_id] = st.multiselect(
+                f"{task_name} の依存するタスクを選択してください:",
+                list(task_name_mapping.keys()),
+                default=[]
+            )
+
+    # タスクリストの生成
+    tasks = [
+        Task(task_id, task_hours_input[task_id], field_area, max_workers_input[task_id], buffer_input[task_id], dependencies=dependencies_input[task_id])
+        for task_id in task_order
+    ]
+
         # サイドバーにタスク順序の選択を追加
     with st.sidebar:
         st.title("タスク順序")
