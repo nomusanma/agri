@@ -301,12 +301,14 @@ def main():
 # 既存のコードを変更
     if st.button('スケジュールの計算'):
         with st.spinner("計算中..."): 
-            tasks = schedule_tasks(tasks, start_date)
-            total_workdays = calculate_total_workdays(tasks[0].start_date, tasks[-1].end_date)
+            scheduled_tasks = schedule_tasks(tasks, start_date)  # Update: タスクをスケジュール
+            if scheduled_tasks[0].start_date is None or scheduled_tasks[-1].end_date is None:  # Update: 日付が設定されていることを確認
+                st.error("タスクのスケジューリングに失敗しました。入力値を確認してください。")
+                return  # Update: エラーが発生した場合は早期に関数を終了
+            total_workdays = calculate_total_workdays(scheduled_tasks[0].start_date, scheduled_tasks[-1].end_date)  # Update: scheduled_tasksを使用
             new_start_date = get_new_start_date(due_date, total_workdays)
-            # 新しいタスク順序でタスクリストを再作成
             tasks = [Task(task_id, task_hours_input[task_id], field_area, max_workers_input[task_id], buffer_input[task_id], dependencies=task_dependencies.get(task_id, []))
-                    for task_id in task_order]
+                 for task_id in task_order]
             scheduled_tasks_new_start = schedule_tasks(tasks, new_start_date)
 
         st.success("計算完了!")  
