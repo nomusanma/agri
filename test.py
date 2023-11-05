@@ -253,91 +253,74 @@ def main():
         "11": ["6", "10"]
     }
 
-
+    tab = st.beta_tabs(
+        [
+            {"label": "圃場設定", "value": "field_settings"},
+            {"label": "タスク設定", "value": "task_settings"}
+        ]
+    )    
     # サイドバーに入力部分を移動
-    with st.sidebar:
-        st.title("設定")
-        field_area = st.number_input("圃場の面積を入力してください（デフォルト: 1ha）:", value=1.0, step=0.1)
-        task_hours_input = {}
-        buffer_input = {}
-        max_workers_input = {}
-        for task_id, task_name in task_name_mapping.items():
-            task_hours_input[task_id] = st.number_input(
-                f"{task_name} の作業時間を入力してください (時間/ha)：",
-                value=default_task_hours[task_id],
-                step=0.5  # ここで0.5単位での入力を設定
+    if tab == "field_settings":
+        with st.sidebar:
+            st.title("設定")
+            field_area = st.number_input("圃場の面積を入力してください（デフォルト: 1ha）:", value=1.0, step=0.1)
+            task_hours_input = {}
+            buffer_input = {}
+            max_workers_input = {}
+            for task_id, task_name in task_name_mapping.items():
+                task_hours_input[task_id] = st.number_input(
+                    f"{task_name} の作業時間を入力してください (時間/ha)：",
+                    value=default_task_hours[task_id],
+                    step=0.5  # ここで0.5単位での入力を設定
+                )
+                buffer_input[task_id] = st.number_input(f"{task_name} のバッファ日数を入力してください:", value=0, min_value=0, format="%d")
+                max_workers_input[task_id] = st.number_input(f"{task_name} の同時稼働できるトラクタ/作業員の数を入力してください:", value=1, min_value=1, format="%d")
+
+    
+
+
+        tasks = [
+            Task(task_id, task_hours_input[task_id], field_area, max_workers_input[task_id], buffer_input[task_id], dependencies=dependencies)
+            for task_id, dependencies in [("1", []), ("2", ["1"]), ("3", ["2"]), ("4", ["3"]), ("5", ["4"]), ("6", ["5"]), ("7", ["1"]), ("8", ["7"]), ("9", ["8"]), ("10", ["9"]), ("11", ["6","10"])]
+        ]
+
+
+        # 作業IDから作業名へのマッピングを作成
+        task_id_to_name = {id: name for id, name in task_name_mapping.items()}
+        # 作業名から作業IDへのマッピングを作成
+        task_name_to_id = {name: id for id, name in task_name_mapping.items()}
+    elif tab == "task_settings":
+        with st.sidebar:
+            st.title("タスク順序")
+            task_order_names = st.multiselect(
+                "タスクの順序をドラッグ&ドロップで並べ替えてください:",
+                list(task_name_mapping.values()),  # 作業名を使用
+                default=list(task_name_mapping.values())  # デフォルト値も作業名を使用
             )
-            buffer_input[task_id] = st.number_input(f"{task_name} のバッファ日数を入力してください:", value=0, min_value=0, format="%d")
-            max_workers_input[task_id] = st.number_input(f"{task_name} の同時稼働できるトラクタ/作業員の数を入力してください:", value=1, min_value=1, format="%d")
-
- 
+            # 選択された作業名を作業IDに変換
+            task_order = [task_name_to_id[name] for name in task_order_names]
 
 
-    tasks = [
-        Task(task_id, task_hours_input[task_id], field_area, max_workers_input[task_id], buffer_input[task_id], dependencies=dependencies)
-        for task_id, dependencies in [("1", []), ("2", ["1"]), ("3", ["2"]), ("4", ["3"]), ("5", ["4"]), ("6", ["5"]), ("7", ["1"]), ("8", ["7"]), ("9", ["8"]), ("10", ["9"]), ("11", ["6","10"])]
-    ]
+        # サイドバーにタスクの前のタスクの入力部分を追加
+        with st.sidebar:
+            st.title("前のタスク")
+            previous_tasks_input = {}
+            for task_id, task_name in task_name_mapping.items():
+                # 選択された前のタスクの作業名を取得
+                selected_prev_task_names = st.multiselect(
+                    f"{task_name} の前に完了する必要があるタスクを選択してください:",
+                    list(task_name_mapping.values()),
+                    default=[task_name_mapping[prev_task_id] for prev_task_id in default_previous_tasks[task_id]]
+                )
+                # 選択された前のタスクの作業名を作業IDに変換
+                previous_tasks_input[task_id] = [task_name_to_id[name] for name in selected_prev_task_names]
 
 
-    # 作業IDから作業名へのマッピングを作成
-    task_id_to_name = {id: name for id, name in task_name_mapping.items()}
-    # 作業名から作業IDへのマッピングを作成
-    task_name_to_id = {name: id for id, name in task_name_mapping.items()}
-
-    # サイドバーにタスク順序の選択を追加
-    # サイドバーにタスク順序の選択を追加
-    # with st.sidebar:
-    #     st.title("タスク順序")
-    #     task_order_names = st.multiselect(
-    #         "タスクの順序をドラッグ&ドロップで並べ替えてください:",
-    #         list(task_name_mapping.values()),  # 作業名を使用
-    #         default=list(task_name_mapping.values())  # デフォルト値も作業名を使用
-    #     )
-    #     # 選択された作業名を作業IDに変換
-    #     task_order = [task_name_to_id[name] for name in task_order_names]
-
-
-    # # サイドバーにタスクの前のタスクの入力部分を追加
-    # with st.sidebar:
-    #     st.title("前のタスク")
-    #     previous_tasks_input = {}
-    #     for task_id, task_name in task_name_mapping.items():
-    #         # 選択された前のタスクの作業名を取得
-    #         selected_prev_task_names = st.multiselect(
-    #             f"{task_name} の前に完了する必要があるタスクを選択してください:",
-    #             list(task_name_mapping.values()),
-    #             default=[task_name_mapping[prev_task_id] for prev_task_id in default_previous_tasks[task_id]]
-    #         )
-    #         # 選択された前のタスクの作業名を作業IDに変換
-    #         previous_tasks_input[task_id] = [task_name_to_id[name] for name in selected_prev_task_names]
-    with st.sidebar:
-        st.title("タスク順序設定")
-        task_order_input = {}
-        for task_id, task_name in task_name_mapping.items():
-            task_order_input[task_id] = st.number_input(
-                f"{task_name} の実行順序を指定してください (小さい数値が先に実行されます):",
-                value=int(task_id),
-                min_value=1,
-                format="%d"
-            )
-
-    sorted_task_ids = [task_id for task_id, _ in sorted(task_order_input.items(), key=lambda item: item[1])]
-
-    with st.sidebar:
-        st.title("依存関係設定")
-        dependencies_input = {}
-        for task_id, task_name in task_name_mapping.items():
-            selected_dependency_names = st.multiselect(
-                f"{task_name} の前に完了する必要があるタスクを選択してください:",
-                list(task_name_mapping.values()),
-                default=[]
-            )
-            dependencies_input[task_id] = [task_name_to_id[name] for name in selected_dependency_names]
-
-    tasks = [
-        Task(task_id, task_hours_input[task_id], field_area, max_workers_input[task_id], buffer_input[task_id], dependencies=dependencies_input[task_id])
-        for task_id in sorted_task_ids
-    ]
+        # タスクリストの生成
+        tasks = [
+            Task(task_id, task_hours_input[task_id], field_area, max_workers_input[task_id], buffer_input[task_id], dependencies=previous_tasks_input[task_id])
+            for task_id in task_order
+        ]
     start_date = datetime.date(2023, 4, 1)
     due_date = st.date_input('希望納期を選択してください:', datetime.date(2024, 7, 1))
 
