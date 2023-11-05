@@ -275,7 +275,10 @@ def main():
                 )
                 buffer_input[task_id] = st.number_input(f"{task_name} のバッファ日数を入力してください:", value=0, min_value=0, format="%d")
                 max_workers_input[task_id] = st.number_input(f"{task_name} の同時稼働できるトラクタ/作業員の数を入力してください:", value=1, min_value=1, format="%d")
-
+        tasks = [
+            Task(task_id, task_hours_input[task_id], field_area, max_workers_input[task_id], buffer_input[task_id], dependencies=previous_tasks_input[task_id])
+            for task_id in task_name_mapping
+        ]
     elif section == "タスク設定":
         with st.sidebar:
             st.title("タスク順序")
@@ -295,10 +298,10 @@ def main():
                 )
                 previous_tasks_input[task_id] = [task_name_to_id[name] for name in selected_prev_task_names]
 
-    tasks = [
-        Task(task_id, task_hours_input[task_id], field_area, max_workers_input[task_id], buffer_input[task_id], dependencies=previous_tasks_input[task_id])
-        for task_id in task_name_mapping
-    ]
+        tasks = [
+            Task(task_id, task_hours_input[task_id], field_area, max_workers_input[task_id], buffer_input[task_id], dependencies=previous_tasks_input[task_id])
+            for task_id in task_order
+        ]
 
     start_date = datetime.date(2023, 4, 1)
     due_date = st.date_input('希望納期を選択してください:', datetime.date(2024, 7, 1))
