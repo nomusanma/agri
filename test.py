@@ -311,19 +311,32 @@ def main():
     #         # 選択された前のタスクの作業名を作業IDに変換
     #         previous_tasks_input[task_id] = [task_name_to_id[name] for name in selected_prev_task_names]
     with st.sidebar:
-        st.title("タスクの順序と依存関係")
-        previous_tasks_input = {}
+        st.title("タスク順序設定")
+        task_order_input = {}
         for task_id, task_name in task_name_mapping.items():
-            selected_prev_task_names = st.multiselect(
-                f"{task_name} の前に完了する必要があるタスクを選択してください:",
-                [name for id, name in task_name_mapping.items() if id != task_id],
-                default=[task_name_mapping[prev_task_id] for prev_task_id in default_previous_tasks[task_id]]
+            task_order_input[task_id] = st.number_input(
+                f"{task_name} の実行順序を指定してください (小さい数値が先に実行されます):",
+                value=int(task_id),
+                min_value=1,
+                format="%d"
             )
-            previous_tasks_input[task_id] = [task_name_to_id[name] for name in selected_prev_task_names]
+
+    sorted_task_ids = [task_id for task_id, _ in sorted(task_order_input.items(), key=lambda item: item[1])]
+
+    with st.sidebar:
+        st.title("依存関係設定")
+        dependencies_input = {}
+        for task_id, task_name in task_name_mapping.items():
+            selected_dependency_names = st.multiselect(
+                f"{task_name} の前に完了する必要があるタスクを選択してください:",
+                list(task_name_mapping.values()),
+                default=[]
+            )
+            dependencies_input[task_id] = [task_name_to_id[name] for name in selected_dependency_names]
 
     tasks = [
-        Task(task_id, task_hours_input[task_id], field_area, max_workers_input[task_id], buffer_input[task_id], dependencies=previous_tasks_input[task_id])
-        for task_id in task_name_mapping.keys()
+        Task(task_id, task_hours_input[task_id], field_area, max_workers_input[task_id], buffer_input[task_id], dependencies=dependencies_input[task_id])
+        for task_id in sorted_task_ids
     ]
     start_date = datetime.date(2023, 4, 1)
     due_date = st.date_input('希望納期を選択してください:', datetime.date(2024, 7, 1))
